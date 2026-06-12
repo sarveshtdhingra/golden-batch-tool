@@ -332,8 +332,11 @@ When a user asks about a specific batch:
 Be specific, technical, and actionable in your responses."""
                 # Call Gemini API
                 try:
-                    model = get_gemini_model()
-                    response = model.generate_content(
+    model = get_gemini_model()
+    if model is None:
+        st.error("Model not initialized. Check your API key.")
+        st.stop()
+    response = model.generate_content(
                         f"{system_prompt}\n\nUser question: {user_input}",
                         generation_config=genai.types.GenerationConfig(
                             max_output_tokens=1024,
