@@ -11,7 +11,11 @@ st.write("Upload your batch data and I will analyze it!")
 uploaded_file = st.file_uploader("Upload batch data", type=["csv", "xlsx", "xls"])
  
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+    # Read file - handle both CSV and Excel
+    if uploaded_file.name.endswith('.csv'):
+        df = pd.read_csv(uploaded_file)
+    elif uploaded_file.name.endswith(('.xls', '.xlsx')):
+        df = pd.read_excel(uploaded_file)
     st.write("✅ File uploaded!")
     st.write(f"Total rows: {len(df)}")
     st.write(f"Total batches: {df['batch_id'].nunique()}")
@@ -94,4 +98,4 @@ if uploaded_file is not None:
     **Most Critical Parameter:** {importance.iloc[0]['Parameter']}
     """)
 else:
-    st.info("👈 Please upload a CSV file to analyze")
+    st.info("👈 Please upload a CSV or Excel file to analyze")
