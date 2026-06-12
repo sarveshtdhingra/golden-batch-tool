@@ -11,7 +11,11 @@ st.set_page_config(page_title="Golden Batch Analyzer", layout="wide", initial_si
 # Initialize Gemini
 @st.cache_resource
 def get_gemini_model():
-    api_key = st.secrets.get("GEMINI_API_KEY") or st.secrets["gemini_api_key"]
+    import os
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        st.error("❌ GEMINI_API_KEY not found. Please set it in Render environment variables.")
+        return None
     genai.configure(api_key=api_key)
     return genai.GenerativeModel('gemini-1.5-flash')
  
