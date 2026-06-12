@@ -280,7 +280,7 @@ if uploaded_file is not None:
                 )
                 st.plotly_chart(fig_comparison, use_container_width=True)
                 st.dataframe(comparison_df, use_container_width=True)
-        # ==================== TAB 2: AI CHAT ASSISTANT ====================
+# ==================== TAB 2: AI CHAT ASSISTANT ====================
         with tab2:
             st.markdown("## 💬 AI Batch Analysis Chat")
             st.markdown("Ask questions about your batches and get AI-powered insights!")
@@ -332,11 +332,11 @@ When a user asks about a specific batch:
 Be specific, technical, and actionable in your responses."""
                 # Call Gemini API
                 try:
-    model = get_gemini_model()
-    if model is None:
-        st.error("Model not initialized. Check your API key.")
-        st.stop()
-    response = model.generate_content(
+                    model = get_gemini_model()
+                    if model is None:
+                        st.error("Model not initialized. Check your API key.")
+                        st.stop()
+                    response = model.generate_content(
                         f"{system_prompt}\n\nUser question: {user_input}",
                         generation_config=genai.types.GenerationConfig(
                             max_output_tokens=1024,
@@ -349,84 +349,13 @@ Be specific, technical, and actionable in your responses."""
                     error_msg = f"Error: {str(e)}\n\nMake sure your GEMINI_API_KEY is set correctly in Render environment variables."
                     st.session_state.chat_history.append({"role": "assistant", "content": error_msg})
                     st.rerun()
-            # Example questions
-            st.divider()
-            st.markdown("### 💡 Example Questions")
-            st.markdown("""
-            - "What's wrong with batch B002?"
-            - "Why did batch B004 fail?"
-            - "Which batches had temperature issues?"
-            - "Compare batch B001 with batch B005"
-            - "What parameters caused the low yield in batch B010?"
-            """)
-        # ==================== TAB 3: DATA EXPLORER ====================
-        with tab3:
-            st.markdown("## 📋 All Batches Summary")
-            batch_display = batch_summary.copy()
-            batch_display['Status'] = batch_display['status'].apply(lambda x: '🟢 GOLDEN' if x == 'GOLDEN' else '🔴 NON-GOLDEN')
-            batch_display = batch_display.round(2)
-            st.dataframe(
-                batch_display[['batch_id', 'Status', 'temperature', 'pressure', 'ph', 'cycle_time', 'yield', 'impurity_percent', 'score']],
-                use_container_width=True,
-                hide_index=True
-            )
-            st.divider()
-            st.markdown("## 📊 Detailed Batch Analysis")
-            selected_batch = st.selectbox(
-                "Select a batch to view details:",
-                batch_summary['batch_id'].unique(),
-                key="batch_detail_selector"
-            )
-            if selected_batch:
-                batch_data = batch_summary[batch_summary['batch_id'] == selected_batch].iloc[0]
-                batch_full_data = df[df['batch_id'] == selected_batch]
-                col1, col2, col3, col4 = st.columns(4)
-                with col1:
-                    st.metric("Batch Status", "🟢 GOLDEN" if batch_data['status'] == 'GOLDEN' else "🔴 NON-GOLDEN")
-                with col2:
-                    st.metric("Quality Score", f"{batch_data['score']:.1f}/100")
-                with col3:
-                    st.metric("Yield", f"{batch_data['yield']:.1f}%")
-                with col4:
-                    st.metric("Impurity", f"{batch_data['impurity_percent']:.2f}%")
-                st.markdown(f"### Parameter Trends for {selected_batch}")
-                fig_trend = go.Figure()
-                fig_trend.add_trace(go.Scatter(
-                    y=batch_full_data['temperature'],
-                    name='Temperature (°C)',
-                    mode='lines+markers',
-                    line=dict(color='#e74c3c', width=2),
-                    marker=dict(size=6)
-                ))
-                if len(golden_batches) > 0:
-                    fig_trend.add_hline(
-                        y=golden_batches['temperature'].mean(),
-                        line_dash="dash",
-                        line_color="green",
-                        annotation_text="Golden Avg"
-                    )
-                fig_trend.update_layout(
-                    title=f"Temperature Trend",
-                    xaxis_title="Reading #",
-                    yaxis_title="Temperature (°C)",
-                    height=400,
-                    hovermode='x unified'
-                )
-                st.plotly_chart(fig_trend, use_container_width=True)
-                # Show all raw data for this batch
-                st.markdown("### Raw Data")
-                st.dataframe(batch_full_data, use_container_width=True)
- 
-else:
-    st.info("👈 **Please upload a batch data file to get started!**")
-    st.markdown("""
-    ### 📋 Expected File Format
-    Your CSV or Excel file should contain:
-    - `batch_id` - Batch identifier
-    - `temperature` - Process temperature
-    - `pressure` - Process pressure
-    - `ph` - pH level
-    - `cycle_time` - Batch cycle time
-    - `yield` - Batch yield percentage
-    - `impurity_percent` - Impurity percentage
-    """)
+                # Example questions
+                st.divider()
+                st.markdown("### 💡 Example Questions")
+                st.markdown("""
+                - "What's wrong with batch B002?"
+                - "Why did batch B004 fail?"
+                - "Which batches had temperature issues?"
+                - "Compare batch B001 with batch B005"
+                - "What parameters caused the low yield in batch B010?"
+                """)
